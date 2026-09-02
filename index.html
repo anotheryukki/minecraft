@@ -1,0 +1,832 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MINECRAFTERS — $MINECRAFT | The Cult Coin</title>
+<meta name="description" content="MINECRAFTERS ($MINECRAFT) — a satirical meme coin paired with $MSFT. Join the cult and forge your Minecraft-style pfp." />
+<meta name="theme-color" content="#0b0a08" />
+<link rel="icon" type="image/png" href="/pfp.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#0b0a08;
+    --ink-2:#141210;
+    --dirt:#6b4423;
+    --dirt-dark:#4a2f17;
+    --bark:#3a2a17;
+    --grass:#5f9c3b;
+    --grass-dark:#3f6f27;
+    --gold:#f0b23a;
+    --gold-dark:#8a6018;
+    --gold-light:#f7cc72;
+    --cult:#9b4de0;
+    --cult-dark:#4a1f80;
+    --cult-bg:#160a22;
+    --redstone:#c73a2f;
+    --bone:#ece2c8;
+    --bone-dim:#c9bfa6;
+    --stone:#8b8b8b;
+    --stone-dark:#4a4a4a;
+    --stone-light:#c6c6c6;
+    --font-display:'Silkscreen', monospace;
+    --font-body:'IBM Plex Sans', system-ui, sans-serif;
+    --font-mono:'Silkscreen', monospace;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto;} }
+
+  body{
+    margin:0;
+    background:var(--ink);
+    color:var(--bone);
+    font-family:var(--font-body);
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+    padding-bottom:76px;
+  }
+
+  img{max-width:100%;display:block;}
+  svg.icon{image-rendering:pixelated;shape-rendering:crispEdges;}
+  a{color:inherit;}
+  button{font-family:inherit;cursor:pointer;}
+
+  ::selection{background:var(--gold);color:var(--ink);}
+
+  /* grain overlay */
+  .grain{
+    position:fixed;inset:0;pointer-events:none;z-index:2;
+    opacity:.05;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  /* ambient torches */
+  .torch-glow{position:fixed;pointer-events:none;z-index:0;border-radius:50%;filter:blur(60px);}
+  .torch-glow.a{top:-10%;left:-8%;width:46vw;height:46vw;background:radial-gradient(circle, rgba(240,178,58,.20), transparent 65%);animation:flicker 4s ease-in-out infinite;}
+  .torch-glow.b{top:10%;right:-10%;width:50vw;height:50vw;background:radial-gradient(circle, rgba(155,77,224,.16), transparent 65%);animation:flicker 5s ease-in-out infinite .8s;}
+  @keyframes flicker{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.7;transform:scale(.96);}}
+  @media (prefers-reduced-motion: reduce){ .torch-glow{animation:none;} }
+
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px;position:relative;z-index:1;}
+
+  .pixel-font{font-family:var(--font-display);line-height:1.6;}
+  .mono{font-family:var(--font-mono);}
+
+  /* ============ HOTBAR NAV ============ */
+  .hotbar{
+    position:fixed;left:50%;bottom:14px;transform:translateX(-50%);
+    display:flex;gap:6px;padding:6px;
+    background:linear-gradient(#2b2b2b,#1c1c1c);
+    border:3px solid #0d0d0d;
+    box-shadow:0 6px 0 rgba(0,0,0,.5), 0 0 0 2px #4a4a4a inset;
+    z-index:50;
+  }
+  .hotbar-slot{
+    position:relative;width:44px;height:44px;
+    background:linear-gradient(135deg,#8b8b8b,#6e6e6e);
+    border-top:2px solid #d8d8d8;border-left:2px solid #d8d8d8;
+    border-bottom:2px solid #3d3d3d;border-right:2px solid #3d3d3d;
+    display:flex;align-items:center;justify-content:center;
+    color:var(--bone);transition:transform .12s cubic-bezier(.34,1.56,.64,1), box-shadow .12s, filter .12s;
+  }
+  .hotbar-slot svg{width:24px;height:24px;}
+  .hotbar-slot:hover, .hotbar-slot:focus-visible{filter:brightness(1.18);transform:translateY(-3px);}
+  .hotbar-slot:active{transform:translateY(0);}
+  .hotbar-slot:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+  .hotbar-slot.active{box-shadow:0 0 0 2px var(--bone) inset, 0 0 10px rgba(236,226,200,.6);}
+  .hotbar-slot .tip{
+    position:absolute;bottom:56px;left:50%;transform:translateX(-50%) translateY(4px);
+    background:rgba(10,8,6,.95);border:2px solid var(--bark);color:var(--bone);
+    font-family:var(--font-mono);font-size:11px;white-space:nowrap;padding:5px 8px;
+    opacity:0;pointer-events:none;transition:opacity .12s, transform .12s;
+  }
+  .hotbar-slot:hover .tip, .hotbar-slot:focus-visible .tip{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  /* ============ ACHIEVEMENT TOASTS ============ */
+  .toast-stack{position:fixed;top:16px;right:16px;z-index:60;display:flex;flex-direction:column;gap:8px;max-width:min(320px, calc(100vw - 32px));}
+  .toast{
+    display:flex;align-items:center;gap:10px;
+    background:linear-gradient(#3a2f1a,#241d10);
+    border:2px solid var(--gold-dark);
+    box-shadow:4px 4px 0 rgba(0,0,0,.5);
+    padding:10px 12px;
+    transform:translateX(120%);opacity:0;
+    transition:transform .35s cubic-bezier(.34,1.56,.64,1), opacity .3s;
+  }
+  .toast.show{transform:translateX(0);opacity:1;}
+  .toast .icon-box{width:32px;height:32px;flex:none;background:var(--ink);border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;}
+  .toast .icon-box svg{width:20px;height:20px;}
+  .toast .t-title{font-family:var(--font-display);font-size:9px;color:var(--gold-light);margin-bottom:4px;letter-spacing:.5px;}
+  .toast .t-body{font-family:var(--font-mono);font-size:12px;color:var(--bone);}
+  @media (prefers-reduced-motion: reduce){ .toast{transition:opacity .2s;} }
+
+  /* ============ HEADER / HERO ============ */
+  header.hero{
+    position:relative;isolation:isolate;min-height:100svh;display:flex;flex-direction:column;
+    justify-content:center;align-items:center;text-align:center;
+    padding:120px 24px 100px;
+    background:
+      radial-gradient(ellipse at 30% 20%, rgba(240,178,58,.10), transparent 55%),
+      radial-gradient(ellipse at 75% 60%, rgba(155,77,224,.12), transparent 55%),
+      linear-gradient(180deg, #0b0a08 0%, #120e18 55%, #0b0a08 100%);
+    overflow:hidden;
+    border-bottom:6px solid var(--dirt-dark);
+  }
+  .ground-strip{position:absolute;left:-28px;bottom:0;width:calc(100% + 28px);height:14px;
+    background-image:repeating-linear-gradient(90deg, var(--grass) 0 26px, var(--grass-dark) 26px 28px);
+    animation:scroll-ground 2.6s linear infinite;
+  }
+  @keyframes scroll-ground{from{transform:translateX(0);}to{transform:translateX(-28px);}}
+  @media (prefers-reduced-motion: reduce){ .ground-strip{animation:none;} }
+
+  .particles{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:-1;}
+  .particle{
+    position:absolute;bottom:-10px;left:var(--left);
+    width:var(--size);height:var(--size);background:var(--pcolor);
+    opacity:0;box-shadow:0 0 12px 3px var(--pcolor), 0 0 3px 1px #fff8;
+    animation:rise var(--dur) linear infinite;
+    animation-delay:var(--delay);
+  }
+  @keyframes rise{
+    0%{transform:translate(0,0);opacity:0;}
+    10%{opacity:1;}
+    50%{transform:translate(var(--drift),-46vh);opacity:.85;}
+    85%{opacity:.6;}
+    100%{transform:translate(calc(var(--drift) * 2),-92vh);opacity:0;}
+  }
+  @media (prefers-reduced-motion: reduce){ .particle{animation:none;opacity:0;} }
+
+  .eyebrow{
+    font-family:var(--font-mono);font-size:12px;letter-spacing:3px;color:var(--cult);
+    border:1px solid var(--cult-dark);background:rgba(155,77,224,.08);
+    padding:8px 14px;margin-bottom:28px;text-transform:uppercase;
+  }
+
+  .hero-title{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:clamp(16px, 6.6vw, 58px);
+    color:var(--bone);
+    letter-spacing:2px;
+    margin:0 0 18px;
+    display:flex;flex-wrap:wrap;justify-content:center;gap:.05em;
+    text-shadow:4px 4px 0 rgba(0,0,0,.6);
+  }
+  .hero-title span{display:inline-block;animation:drop .6s cubic-bezier(.34,1.56,.64,1) both;animation-delay:calc(var(--i) * 45ms);}
+  @keyframes drop{from{opacity:0;transform:translateY(-46px) scale(1.1);}to{opacity:1;transform:translateY(0) scale(1);}}
+  @media (prefers-reduced-motion: reduce){ .hero-title span{animation:none;opacity:1;} }
+
+  .ticker{
+    position:relative;
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:clamp(20px, 4.2vw, 32px);
+    color:var(--gold);
+    text-shadow:0 0 18px rgba(240,178,58,.55), 3px 3px 0 rgba(0,0,0,.6);
+    margin-bottom:36px;
+  }
+  .ticker::after{
+    content:attr(data-text);
+    position:absolute;inset:0;
+    color:transparent;
+    text-shadow:0 0 32px rgba(240,178,58,.9);
+    opacity:0;
+    animation:pulse-glow 3.2s ease-in-out infinite;
+  }
+  @keyframes pulse-glow{0%,100%{opacity:0;}50%{opacity:.85;}}
+  @media (prefers-reduced-motion: reduce){ .ticker::after{animation:none;opacity:0;} }
+
+  .tooltip-card{
+    background:linear-gradient(180deg, #1c0e2b, #120820);
+    border-top:2px solid #7b3fc4;border-left:2px solid #5a2a99;
+    border-right:2px solid #2c1450;border-bottom:2px solid #2c1450;
+    box-shadow:0 8px 0 rgba(0,0,0,.5), 0 0 34px rgba(155,77,224,.22);
+    padding:22px 26px;max-width:480px;width:100%;text-align:left;margin-bottom:40px;
+  }
+  .tooltip-card .tt-name{font-family:var(--font-mono);font-weight:700;color:var(--bone);font-size:14px;margin-bottom:8px;}
+  .tooltip-card .tt-rarity{font-style:italic;color:var(--cult);font-size:12px;margin-bottom:14px;font-family:var(--font-body);}
+  .tooltip-card .tt-line{display:flex;align-items:center;gap:8px;color:var(--gold-light);font-size:13px;margin-bottom:6px;font-family:var(--font-mono);}
+  .tooltip-card .tt-line svg{width:16px;height:16px;flex:none;}
+  .tooltip-card .tt-flavor{margin-top:14px;color:var(--bone-dim);font-style:italic;font-size:13px;border-top:1px solid rgba(155,77,224,.25);padding-top:12px;}
+
+  .hero-cta{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-bottom:18px;}
+  .hero-note{font-family:var(--font-mono);font-size:12px;color:var(--bone-dim);max-width:420px;}
+  .hero-note a{color:var(--gold);text-decoration:underline;text-underline-offset:3px;}
+
+  /* ============ BUTTONS ============ */
+  .btn{
+    font-family:var(--font-display);font-weight:700;font-size:11px;letter-spacing:.5px;
+    padding:16px 22px;border:none;color:#241a17;position:relative;
+    transition:transform .14s cubic-bezier(.34,1.56,.64,1), box-shadow .14s, filter .14s;
+  }
+  .btn-gold{
+    background:var(--gold);
+    box-shadow:inset -3px -3px 0 rgba(0,0,0,.3), inset 3px 3px 0 rgba(255,255,255,.4), 0 5px 0 var(--gold-dark);
+  }
+  .btn-gold:hover{transform:translateY(-3px);box-shadow:inset -3px -3px 0 rgba(0,0,0,.3), inset 3px 3px 0 rgba(255,255,255,.55), 0 8px 0 var(--gold-dark), 0 0 26px rgba(240,178,58,.5);}
+  .btn-gold:active{transform:translateY(2px);box-shadow:inset -3px -3px 0 rgba(0,0,0,.4), inset 3px 3px 0 rgba(255,255,255,.2), 0 2px 0 var(--gold-dark);}
+
+  .btn-stone{
+    background:linear-gradient(135deg,#a8a8a8,#7d7d7d);color:var(--ink);
+    box-shadow:inset -3px -3px 0 rgba(0,0,0,.3), inset 3px 3px 0 rgba(255,255,255,.35), 0 5px 0 #4a4a4a;
+  }
+  .btn-stone:hover{transform:translateY(-3px);box-shadow:inset -3px -3px 0 rgba(0,0,0,.3), inset 3px 3px 0 rgba(255,255,255,.5), 0 8px 0 #4a4a4a;}
+  .btn-stone:active{transform:translateY(2px);box-shadow:inset -3px -3px 0 rgba(0,0,0,.4), inset 3px 3px 0 rgba(255,255,255,.15), 0 2px 0 #4a4a4a;}
+
+  .btn:disabled{filter:grayscale(.5) brightness(.75);cursor:not-allowed;transform:none !important;}
+  .btn:focus-visible{outline:3px solid var(--bone);outline-offset:3px;}
+
+  .btn-soon{
+    position:relative;background:linear-gradient(135deg,#5a5a5a,#3d3d3d);color:var(--bone-dim);
+    box-shadow:inset -3px -3px 0 rgba(0,0,0,.35), inset 3px 3px 0 rgba(255,255,255,.12), 0 5px 0 #262626;
+    cursor:default;
+  }
+  .btn-soon .ribbon{position:absolute;top:-10px;right:-10px;background:var(--redstone);color:var(--bone);font-family:var(--font-mono);font-size:9px;padding:3px 6px;transform:rotate(8deg);box-shadow:2px 2px 0 rgba(0,0,0,.5);}
+
+  /* ============ SECTIONS ============ */
+  section{position:relative;padding:96px 0;}
+  .section-head{text-align:center;max-width:640px;margin:0 auto 56px;}
+  .section-kicker{font-family:var(--font-mono);font-size:12px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-bottom:14px;}
+  .section-title{font-family:var(--font-display);font-weight:700;font-size:clamp(20px,3.4vw,30px);color:var(--bone);margin:0 0 16px;line-height:1.5;}
+  .section-sub{color:var(--bone-dim);font-size:15px;}
+
+  section.reveal{opacity:0;transform:translateY(28px);transition:opacity .6s ease, transform .6s cubic-bezier(.22,1,.36,1);}
+  section.reveal.in-view{opacity:1;transform:translateY(0);}
+  @media (prefers-reduced-motion: reduce){ section.reveal{opacity:1;transform:none;transition:none;} }
+
+  /* Crafting / tokenomics */
+  #craft{background:var(--ink);}
+  .crafting-table{
+    background:linear-gradient(160deg,#8a5a34,#5f3c1e);
+    border:4px solid var(--bark);box-shadow:8px 8px 0 rgba(0,0,0,.45);
+    padding:22px;
+  }
+  .grid9{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  @media (max-width:640px){ .grid9{grid-template-columns:repeat(2,1fr);} }
+  .slot9{
+    background:linear-gradient(160deg,#c6c6c6,#9c9c9c);
+    border-top:2px solid #e8e8e8;border-left:2px solid #e8e8e8;
+    border-bottom:2px solid #6a6a6a;border-right:2px solid #6a6a6a;
+    padding:16px 12px;text-align:center;color:var(--ink);
+    transition:transform .14s cubic-bezier(.34,1.56,.64,1), box-shadow .14s;
+  }
+  .slot9:hover{transform:translateY(-3px);box-shadow:0 6px 0 rgba(0,0,0,.35);}
+  .slot9 svg{width:30px;height:30px;margin:0 auto 10px;}
+  .slot9 .s-label{font-family:var(--font-mono);font-size:10.5px;letter-spacing:1px;text-transform:uppercase;color:#3a3a3a;margin-bottom:4px;}
+  .slot9 .s-value{font-family:var(--font-display);font-size:12px;color:var(--ink);}
+
+  /* Forge / pfp generator */
+  #forge{background:linear-gradient(180deg,#0b0a08, #160b1e 55%, #0b0a08);}
+  .forge-panel{
+    background:linear-gradient(180deg,#1c1712,#120e0a);
+    border:4px solid var(--bark);box-shadow:8px 8px 0 rgba(0,0,0,.45);
+    padding:32px;max-width:820px;margin:0 auto;
+  }
+  .forge-rig{display:grid;grid-template-columns:1fr auto 1fr;gap:20px;align-items:center;}
+  @media (max-width:680px){ .forge-rig{grid-template-columns:1fr;} }
+  .frame{
+    aspect-ratio:1/1;background:repeating-conic-gradient(#241d15 0% 25%, #1a150f 0% 50%) 0/16px 16px;
+    border:4px solid var(--gold-dark);box-shadow:inset 0 0 0 3px rgba(0,0,0,.4), 4px 4px 0 rgba(0,0,0,.5);
+    display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;
+  }
+  .frame img{width:100%;height:100%;object-fit:cover;}
+  .frame .placeholder{color:var(--bone-dim);font-family:var(--font-mono);font-size:12px;text-align:center;padding:14px;}
+  .frame .placeholder svg{width:36px;height:36px;margin:0 auto 10px;opacity:.6;}
+  .arrow{font-family:var(--font-display);font-size:20px;color:var(--gold);text-align:center;}
+
+  .file-input{display:none;}
+  .forge-actions{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-top:26px;}
+
+  .xp-track{
+    position:relative;height:14px;background:#1a1a1a;border:2px solid #000;
+    overflow:hidden;margin:22px 0 10px;
+  }
+  .xp-fill{position:absolute;top:0;bottom:0;width:34%;background:linear-gradient(90deg,var(--grass-dark),var(--grass));
+    transform:translateX(-120%);animation:marquee 1.6s ease-in-out infinite;
+  }
+  @keyframes marquee{0%{transform:translateX(-120%);}50%{transform:translateX(180%);}100%{transform:translateX(-120%);}}
+  @media (prefers-reduced-motion: reduce){ .xp-fill{animation:marquee 2.4s linear infinite;} }
+  .flavor-text{text-align:center;font-family:var(--font-mono);font-size:12px;color:var(--bone-dim);min-height:18px;transition:opacity .25s;}
+
+  .forge-status{display:none;}
+  .forge-status.show{display:block;}
+  .forge-error{color:var(--redstone);font-family:var(--font-mono);font-size:13px;text-align:center;margin-top:14px;}
+  .forge-hint{text-align:center;color:var(--bone-dim);font-size:12.5px;margin-top:20px;font-family:var(--font-mono);}
+
+  /* Ritual / how to buy */
+  #ritual{background:var(--ink);}
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  @media (max-width:820px){ .steps{grid-template-columns:1fr;} }
+  .step{
+    background:#141210;border:3px solid var(--bark);box-shadow:6px 6px 0 rgba(0,0,0,.4);
+    padding:26px 22px;position:relative;
+  }
+  .step .num{font-family:var(--font-display);font-weight:700;font-size:24px;color:var(--gold);opacity:.5;margin-bottom:14px;}
+  .step h4{font-family:var(--font-display);font-weight:700;font-size:13px;margin:0 0 12px;color:var(--bone);}
+  .step p{margin:0;color:var(--bone-dim);font-size:14px;}
+
+  /* Council / community */
+  #council{background:linear-gradient(180deg,#0b0a08,#140a1e);text-align:center;}
+  .council-links{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+
+  /* Disclaimer sign */
+  footer{background:var(--ink);padding:96px 0 130px;}
+  .sign{
+    max-width:760px;margin:0 auto;background:linear-gradient(180deg,#2a1c10,#1a1006);
+    border:6px solid #140c04;box-shadow:0 0 0 3px #4a2f17 inset, 8px 8px 0 rgba(0,0,0,.4);
+    padding:34px 30px;
+  }
+  .sign h3{font-family:var(--font-display);font-weight:700;font-size:14px;color:var(--redstone);margin:0 0 18px;display:flex;align-items:center;gap:10px;}
+  .sign h3 svg{width:20px;height:20px;}
+  .sign p{color:var(--bone-dim);font-size:13.5px;margin:0 0 14px;}
+  .sign p:last-child{margin-bottom:0;}
+  .sign strong{color:var(--bone);}
+  .foot-bottom{text-align:center;margin-top:36px;color:var(--bone-dim);font-family:var(--font-mono);font-size:12px;}
+
+  .visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+</style>
+</head>
+<body>
+
+<svg class="visually-hidden" aria-hidden="true" focusable="false">
+<defs>
+  <symbol id="i-grass" viewBox="0 0 8 8">
+    <rect x="0" y="0" width="8" height="2" fill="#5f9c3b"/>
+    <rect x="0" y="2" width="8" height="6" fill="#6b4423"/>
+    <rect x="1" y="0" width="1" height="1" fill="#7ab851"/>
+    <rect x="4" y="1" width="1" height="1" fill="#4a7d2c"/>
+    <rect x="1" y="3" width="1" height="1" fill="#563519"/>
+    <rect x="5" y="4" width="1" height="1" fill="#563519"/>
+    <rect x="3" y="6" width="1" height="1" fill="#82552e"/>
+  </symbol>
+  <symbol id="i-gold" viewBox="0 0 8 8">
+    <rect x="1" y="3" width="6" height="3" fill="#f0b23a"/>
+    <rect x="2" y="2" width="4" height="1" fill="#f7cc72"/>
+    <rect x="1" y="6" width="6" height="1" fill="#b9821f"/>
+    <rect x="0" y="4" width="1" height="1" fill="#b9821f"/>
+    <rect x="7" y="4" width="1" height="1" fill="#b9821f"/>
+  </symbol>
+  <symbol id="i-emerald" viewBox="0 0 8 8">
+    <rect x="3" y="0" width="2" height="1" fill="#3fd67a"/>
+    <rect x="2" y="1" width="4" height="1" fill="#2fbf68"/>
+    <rect x="1" y="2" width="6" height="3" fill="#1fa456"/>
+    <rect x="2" y="5" width="4" height="1" fill="#2fbf68"/>
+    <rect x="3" y="6" width="2" height="1" fill="#0d8542"/>
+  </symbol>
+  <symbol id="i-diamond" viewBox="0 0 8 8">
+    <rect x="3" y="0" width="2" height="1" fill="#8ff2ea"/>
+    <rect x="2" y="1" width="4" height="1" fill="#5fe1e8"/>
+    <rect x="1" y="2" width="6" height="3" fill="#33c8d6"/>
+    <rect x="2" y="5" width="4" height="1" fill="#22a9b8"/>
+    <rect x="3" y="6" width="2" height="1" fill="#158393"/>
+  </symbol>
+  <symbol id="i-lock" viewBox="0 0 8 8">
+    <rect x="0" y="0" width="8" height="8" fill="#241a33"/>
+    <rect x="1" y="1" width="6" height="6" fill="#3a2a52"/>
+    <rect x="2" y="2" width="4" height="4" fill="#9b4de0"/>
+    <rect x="3" y="3" width="2" height="2" fill="#241a33"/>
+  </symbol>
+  <symbol id="i-compass" viewBox="0 0 8 8">
+    <rect x="2" y="0" width="4" height="1" fill="#7a5230"/>
+    <rect x="1" y="1" width="6" height="1" fill="#7a5230"/>
+    <rect x="0" y="2" width="8" height="4" fill="#e8dcc0"/>
+    <rect x="1" y="6" width="6" height="1" fill="#7a5230"/>
+    <rect x="2" y="7" width="4" height="1" fill="#7a5230"/>
+    <rect x="3" y="2" width="2" height="2" fill="#c73a2f"/>
+    <rect x="3" y="4" width="2" height="2" fill="#3a3a42"/>
+  </symbol>
+  <symbol id="i-tnt" viewBox="0 0 8 8">
+    <rect x="0" y="0" width="8" height="8" fill="#c73a2f"/>
+    <rect x="0" y="3" width="8" height="2" fill="#ece2c8"/>
+    <rect x="3" y="0" width="2" height="1" fill="#3a2a17"/>
+    <rect x="3" y="0" width="1" height="1" fill="#f0b23a"/>
+  </symbol>
+  <symbol id="i-book" viewBox="0 0 8 8">
+    <rect x="1" y="1" width="6" height="6" fill="#9b4de0"/>
+    <rect x="1" y="1" width="6" height="1" fill="#c896f2"/>
+    <rect x="3" y="1" width="1" height="6" fill="#7a3ab8"/>
+    <rect x="0" y="0" width="1" height="8" fill="#f0b23a"/>
+  </symbol>
+  <symbol id="i-eye" viewBox="0 0 8 8">
+    <rect x="0" y="3" width="8" height="2" fill="#241a33"/>
+    <rect x="1" y="2" width="6" height="4" fill="#3a2a52"/>
+    <rect x="3" y="3" width="2" height="2" fill="#9b4de0"/>
+    <rect x="3" y="3" width="1" height="1" fill="#e8dcc0"/>
+  </symbol>
+  <symbol id="i-torch" viewBox="0 0 8 8">
+    <rect x="3" y="3" width="2" height="5" fill="#6b4423"/>
+    <rect x="2" y="1" width="4" height="2" fill="#f0b23a"/>
+    <rect x="3" y="0" width="2" height="1" fill="#ffdd88"/>
+  </symbol>
+  <symbol id="i-bedrock" viewBox="0 0 8 8">
+    <rect x="0" y="0" width="8" height="8" fill="#4a4a52"/>
+    <rect x="1" y="1" width="2" height="1" fill="#3a3a42"/>
+    <rect x="5" y="2" width="2" height="1" fill="#5a5a62"/>
+    <rect x="2" y="4" width="1" height="2" fill="#3a3a42"/>
+    <rect x="5" y="5" width="2" height="1" fill="#5a5a62"/>
+  </symbol>
+  <symbol id="i-skull" viewBox="0 0 8 8">
+    <rect x="1" y="0" width="6" height="5" fill="#ece2c8"/>
+    <rect x="2" y="2" width="1" height="1" fill="#241a33"/>
+    <rect x="5" y="2" width="1" height="1" fill="#241a33"/>
+    <rect x="1" y="5" width="2" height="1" fill="#ece2c8"/>
+    <rect x="5" y="5" width="2" height="1" fill="#ece2c8"/>
+    <rect x="3" y="6" width="1" height="1" fill="#ece2c8"/>
+  </symbol>
+  <symbol id="i-warn" viewBox="0 0 8 8">
+    <rect x="3" y="0" width="2" height="1" fill="#c73a2f"/>
+    <rect x="2" y="1" width="4" height="1" fill="#c73a2f"/>
+    <rect x="1" y="2" width="6" height="1" fill="#c73a2f"/>
+    <rect x="0" y="3" width="8" height="3" fill="#c73a2f"/>
+    <rect x="1" y="6" width="6" height="1" fill="#c73a2f"/>
+    <rect x="3" y="2" width="2" height="3" fill="#ece2c8"/>
+    <rect x="3" y="5" width="2" height="1" fill="#ece2c8"/>
+  </symbol>
+</defs>
+</svg>
+
+<div class="grain"></div>
+<div class="torch-glow a"></div>
+<div class="torch-glow b"></div>
+
+<div class="toast-stack" id="toastStack" aria-live="polite"></div>
+
+<!-- HOTBAR NAV -->
+<nav class="hotbar" aria-label="Section navigation">
+  <a class="hotbar-slot" data-nav href="#top" aria-label="Home"><svg class="icon"><use href="#i-grass"/></svg><span class="tip">HOME</span></a>
+  <a class="hotbar-slot" data-nav href="#craft" aria-label="Tokenomics"><svg class="icon"><use href="#i-gold"/></svg><span class="tip">CRAFT</span></a>
+  <a class="hotbar-slot" data-nav href="#forge" aria-label="PFP Forge"><svg class="icon"><use href="#i-torch"/></svg><span class="tip">FORGE</span></a>
+  <a class="hotbar-slot" data-nav href="#ritual" aria-label="How to buy"><svg class="icon"><use href="#i-compass"/></svg><span class="tip">RITUAL</span></a>
+  <a class="hotbar-slot" data-nav href="#disclaimer" aria-label="Disclaimer"><svg class="icon"><use href="#i-bedrock"/></svg><span class="tip">SIGN</span></a>
+</nav>
+
+<header class="hero" id="top">
+  <div class="particles" id="particles" aria-hidden="true"></div>
+  <div class="eyebrow">◆ The Overworld's Only Cult Coin ◆</div>
+
+  <h1 class="hero-title" id="heroTitle" aria-label="MINECRAFTERS"></h1>
+  <div class="ticker" data-text="$MINECRAFT">$MINECRAFT</div>
+
+  <div class="tooltip-card">
+    <div class="tt-name">MINECRAFTERS · $MINECRAFT</div>
+    <div class="tt-rarity">Rarity: Cult</div>
+    <div class="tt-line"><svg class="icon"><use href="#i-book"/></svg> Paired with $MSFT (Microsoft Corp)</div>
+    <div class="tt-line"><svg class="icon"><use href="#i-eye"/></svg> Status: Pre-Launch</div>
+    <div class="tt-flavor">"When Redmond speaks, the chunks tremble."</div>
+  </div>
+
+  <div class="hero-cta">
+    <a class="btn btn-gold" href="#ritual">Join The Cult</a>
+  </div>
+  <p class="hero-note">100% satire. $MINECRAFT is not affiliated with Microsoft or Mojang, and is not pegged to $MSFT in any real financial sense. See the <a href="#disclaimer">disclaimer</a> before doing anything silly.</p>
+
+  <div class="ground-strip"></div>
+</header>
+
+<main>
+
+  <!-- TOKENOMICS -->
+  <section id="craft" class="reveal" data-toast="Inspected the Crafting Table">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="section-kicker">Chapter I</div>
+        <h2 class="section-title">The Crafting Table</h2>
+        <p class="section-sub">Nine slots. No hidden recipe. What you see is what gets minted.</p>
+      </div>
+      <div class="crafting-table">
+        <div class="grid9">
+          <div class="slot9"><svg class="icon"><use href="#i-gold"/></svg><div class="s-label">Total Supply</div><div class="s-value">1,000,000,000</div></div>
+          <div class="slot9"><svg class="icon"><use href="#i-emerald"/></svg><div class="s-label">Buy / Sell Tax</div><div class="s-value">0% / 0%</div></div>
+          <div class="slot9"><svg class="icon"><use href="#i-lock"/></svg><div class="s-label">Liquidity</div><div class="s-value">Locked</div></div>
+          <div class="slot9"><svg class="icon"><use href="#i-skull"/></svg><div class="s-label">Ownership</div><div class="s-value">Renounced</div></div>
+          <div class="slot9"><svg class="icon"><use href="#i-compass"/></svg><div class="s-label">Chain</div><div class="s-value">TBA</div></div>
+          <div class="slot9"><svg class="icon"><use href="#i-diamond"/></svg><div class="s-label">Ticker</div><div class="s-value">$MINECRAFT</div></div>
+          <div class="slot9"><svg class="icon"><use href="#i-book"/></svg><div class="s-label">Paired With</div><div class="s-value">$MSFT</div></div>
+          <div class="slot9"><svg class="icon"><use href="#i-bedrock"/></svg><div class="s-label">Dev Wallet</div><div class="s-value">0%</div></div>
+          <div class="slot9"><svg class="icon"><use href="#i-tnt"/></svg><div class="s-label">Status</div><div class="s-value">Pre-Launch</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PFP FORGE -->
+  <section id="forge" class="reveal">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="section-kicker">Chapter II</div>
+        <h2 class="section-title">Forge Your Cult Skin</h2>
+        <p class="section-sub">Upload a photo. We'll smelt it into a Minecraft-style portrait with AI. Robes not included.</p>
+      </div>
+
+      <div class="forge-panel">
+        <div class="forge-rig">
+          <div>
+            <div class="frame" id="inputFrame">
+              <div class="placeholder" id="inputPlaceholder">
+                <svg class="icon"><use href="#i-torch"/></svg>
+                No photo yet
+              </div>
+            </div>
+          </div>
+          <div class="arrow" aria-hidden="true">➜</div>
+          <div>
+            <div class="frame" id="outputFrame">
+              <div class="placeholder" id="outputPlaceholder">
+                <svg class="icon"><use href="#i-eye"/></svg>
+                Your skin appears here
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="forge-status" id="loadingStatus">
+          <div class="xp-track"><div class="xp-fill"></div></div>
+          <div class="flavor-text" id="flavorText">Mining pixels&hellip;</div>
+        </div>
+
+        <div class="forge-error" id="errorStatus" role="alert"></div>
+
+        <div class="forge-actions">
+          <label class="btn btn-stone" for="fileInput" id="chooseLabel">Choose Photo</label>
+          <input class="file-input" type="file" id="fileInput" accept="image/*" />
+          <button class="btn btn-gold" id="smeltBtn" disabled>Smelt It</button>
+          <a class="btn btn-gold" id="downloadBtn" style="display:none" download="minecrafters-pfp.png" target="_blank" rel="noopener">Download Skin</a>
+          <button class="btn btn-stone" id="resetBtn" style="display:none">Smelt Another</button>
+        </div>
+
+        <p class="forge-hint">Your photo is sent to a third-party AI image model to generate the result and isn't stored on our server afterward. Only upload photos you have the right to use.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- RITUAL / HOW TO BUY -->
+  <section id="ritual" class="reveal">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="section-kicker">Chapter III</div>
+        <h2 class="section-title">The Ritual</h2>
+        <p class="section-sub">Three steps. No shortcuts. The mine rewards patience.</p>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="num">01</div>
+          <h4>Get A Wallet</h4>
+          <p>Download a wallet you trust. Fill it with a little gas and a lot of hope.</p>
+        </div>
+        <div class="step">
+          <div class="num">02</div>
+          <h4>Find The Real Contract</h4>
+          <p>Once live, the official contract address will be posted here and in the official channels. Never trust one from a DM.</p>
+        </div>
+        <div class="step">
+          <div class="num">03</div>
+          <h4>Swap &amp; Join</h4>
+          <p>Swap for $MINECRAFT. Welcome to the cult. Advancement unlocked.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COUNCIL -->
+  <section id="council" class="reveal">
+    <div class="wrap">
+      <div class="section-head" style="margin-bottom:32px;">
+        <div class="section-kicker">Chapter IV</div>
+        <h2 class="section-title">The Council</h2>
+        <p class="section-sub">Community channels open at launch.</p>
+      </div>
+      <div class="council-links">
+        <button class="btn btn-soon" type="button">X / Twitter<span class="ribbon">Soon</span></button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer id="disclaimer">
+  <div class="wrap">
+    <div class="sign">
+      <h3><svg class="icon"><use href="#i-warn"/></svg> Disclaimer</h3>
+      <p><strong>$MINECRAFT (&ldquo;MINECRAFTERS&rdquo;)</strong> is a satirical, community-made meme token created for entertainment purposes only. It has no intrinsic value, no guaranteed liquidity, and no expectation of financial return. Nothing on this site is financial, investment, legal, or tax advice &mdash; do your own research and never risk more than you can afford to lose completely.</p>
+      <p>MINECRAFTERS is <strong>not affiliated with, endorsed by, or connected to Mojang Studios, Microsoft Corporation, or the Minecraft trademark</strong> in any way. All references to Minecraft and $MSFT are commentary and parody. &ldquo;Paired with $MSFT&rdquo; describes a joke, not a financial mechanism &mdash; there is no peg, hedge, derivative, or contractual relationship between this token and Microsoft stock of any kind.</p>
+      <p>The pfp generator sends photos you voluntarily upload to a third-party AI image model to produce a stylized result. Only upload images you have the right to use, and avoid uploading photos of other people without their consent.</p>
+      <p>Cryptocurrency is volatile and largely unregulated. You could lose your entire investment. Void where prohibited. Not offered to residents of restricted jurisdictions.</p>
+    </div>
+    <div class="foot-bottom">&copy; 2026 MINECRAFTERS &mdash; built by the cult, for the cult.</div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // Hero title block-drop
+  var title = document.getElementById('heroTitle');
+  var text = 'MINECRAFTERS';
+  text.split('').forEach(function(ch, i){
+    var span = document.createElement('span');
+    span.textContent = ch;
+    span.style.setProperty('--i', i);
+    title.appendChild(span);
+  });
+
+  // Ambient rising particles in the hero
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var particleHost = document.getElementById('particles');
+  if (particleHost && !reduceMotion){
+    var colors = ['#f0b23a', '#9b4de0', '#ece2c8'];
+    var count = 18;
+    for (var p = 0; p < count; p++){
+      var el = document.createElement('span');
+      el.className = 'particle';
+      var size = (Math.random() * 4 + 4).toFixed(1);
+      el.style.setProperty('--left', (Math.random() * 100).toFixed(1) + '%');
+      el.style.setProperty('--size', size + 'px');
+      el.style.setProperty('--pcolor', colors[p % colors.length]);
+      el.style.setProperty('--dur', (Math.random() * 8 + 9).toFixed(1) + 's');
+      el.style.setProperty('--delay', (Math.random() * -16).toFixed(1) + 's');
+      el.style.setProperty('--drift', (Math.random() * 60 - 30).toFixed(0) + 'px');
+      particleHost.appendChild(el);
+    }
+  }
+
+  // Toast system
+  var toastStack = document.getElementById('toastStack');
+  function showToast(msg){
+    var el = document.createElement('div');
+    el.className = 'toast';
+    el.innerHTML = '<div class="icon-box"><svg class="icon"><use href="#i-eye"/></svg></div>' +
+      '<div><div class="t-title">Advancement Made!</div><div class="t-body">' + msg + '</div></div>';
+    toastStack.appendChild(el);
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ el.classList.add('show'); }); });
+    setTimeout(function(){
+      el.classList.remove('show');
+      setTimeout(function(){ el.remove(); }, 400);
+    }, 4200);
+  }
+
+  // Scroll reveal + one-time toasts
+  var sections = document.querySelectorAll('section.reveal');
+  var seen = new Set();
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if (entry.isIntersecting){
+        entry.target.classList.add('in-view');
+        var msg = entry.target.getAttribute('data-toast');
+        if (msg && !seen.has(msg)){
+          seen.add(msg);
+          showToast(msg);
+        }
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -8% 0px' });
+  sections.forEach(function(s){ io.observe(s); });
+
+  // Hotbar active-slot tracking
+  var navSlots = document.querySelectorAll('.hotbar-slot[data-nav]');
+  var navTargets = Array.prototype.map.call(navSlots, function(a){ return document.querySelector(a.getAttribute('href')); }).filter(Boolean);
+  var navIo = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      var idx = navTargets.indexOf(entry.target);
+      if (idx === -1) return;
+      if (entry.isIntersecting){
+        navSlots.forEach(function(s){ s.classList.remove('active'); });
+        navSlots[idx].classList.add('active');
+      }
+    });
+  }, { threshold: 0.5 });
+  navTargets.forEach(function(t){ navIo.observe(t); });
+
+  // ===== Forge (pfp generator) =====
+  var fileInput = document.getElementById('fileInput');
+  var smeltBtn = document.getElementById('smeltBtn');
+  var resetBtn = document.getElementById('resetBtn');
+  var downloadBtn = document.getElementById('downloadBtn');
+  var inputFrame = document.getElementById('inputFrame');
+  var inputPlaceholder = document.getElementById('inputPlaceholder');
+  var outputFrame = document.getElementById('outputFrame');
+  var outputPlaceholder = document.getElementById('outputPlaceholder');
+  var loadingStatus = document.getElementById('loadingStatus');
+  var flavorText = document.getElementById('flavorText');
+  var errorStatus = document.getElementById('errorStatus');
+  var chooseLabel = document.getElementById('chooseLabel');
+
+  var currentDataUrl = null;
+  var flavorLines = ['Mining pixels…', 'Placing blocks…', 'Smelting your face…', 'Enchanting the render…', 'Crafting cult skin…'];
+  var flavorTimer = null;
+
+  function setError(msg){
+    errorStatus.textContent = msg || '';
+  }
+
+  function resizeToDataUrl(file, maxDim){
+    return new Promise(function(resolve, reject){
+      var img = new Image();
+      var reader = new FileReader();
+      reader.onload = function(){
+        img.onload = function(){
+          var w = img.width, h = img.height;
+          var scale = Math.min(1, maxDim / Math.max(w, h));
+          var cw = Math.round(w * scale), ch = Math.round(h * scale);
+          var canvas = document.createElement('canvas');
+          canvas.width = cw; canvas.height = ch;
+          var ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, cw, ch);
+          resolve(canvas.toDataURL('image/jpeg', 0.9));
+        };
+        img.onerror = reject;
+        img.src = reader.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  fileInput.addEventListener('change', function(){
+    var file = fileInput.files && fileInput.files[0];
+    if (!file) return;
+    setError('');
+    if (!file.type.startsWith('image/')){
+      setError('That file isn’t an image. Try a photo instead.');
+      return;
+    }
+    if (file.size > 8 * 1024 * 1024){
+      setError('That skin is too heavy to carry. Pick a smaller image (under 8MB).');
+      return;
+    }
+    resizeToDataUrl(file, 1024).then(function(dataUrl){
+      currentDataUrl = dataUrl;
+      inputFrame.innerHTML = '<img src="' + dataUrl + '" alt="Your uploaded photo" />';
+      smeltBtn.disabled = false;
+    }).catch(function(){
+      setError('Couldn’t read that image. Try a different file.');
+    });
+  });
+
+  smeltBtn.addEventListener('click', function(){
+    if (!currentDataUrl) return;
+    setError('');
+    smeltBtn.disabled = true;
+    chooseLabel.style.pointerEvents = 'none';
+    chooseLabel.style.opacity = '.5';
+    loadingStatus.classList.add('show');
+    var fi = 0;
+    flavorText.textContent = flavorLines[0];
+    flavorTimer = setInterval(function(){
+      fi = (fi + 1) % flavorLines.length;
+      flavorText.style.opacity = 0;
+      setTimeout(function(){ flavorText.textContent = flavorLines[fi]; flavorText.style.opacity = 1; }, 250);
+    }, 1800);
+
+    fetch('/api/pfp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ image: currentDataUrl })
+    }).then(function(r){
+      return r.json().then(function(data){ return { ok: r.ok, data: data }; });
+    }).then(function(res){
+      clearInterval(flavorTimer);
+      loadingStatus.classList.remove('show');
+      chooseLabel.style.pointerEvents = '';
+      chooseLabel.style.opacity = '';
+      if (!res.ok || !res.data || !res.data.url){
+        setError('☠ You died… to a server error. ' + (res.data && res.data.error ? '(' + res.data.error + ')' : ''));
+        smeltBtn.disabled = false;
+        return;
+      }
+      outputFrame.innerHTML = '<img src="' + res.data.url + '" alt="Minecraft-style version of your photo" />';
+      downloadBtn.href = res.data.url;
+      downloadBtn.style.display = '';
+      smeltBtn.style.display = 'none';
+      resetBtn.style.display = '';
+      showToast('Forged a New Skin');
+    }).catch(function(){
+      clearInterval(flavorTimer);
+      loadingStatus.classList.remove('show');
+      chooseLabel.style.pointerEvents = '';
+      chooseLabel.style.opacity = '';
+      setError('☠ You died… to a connection error. Check your connection and try again.');
+      smeltBtn.disabled = false;
+    });
+  });
+
+  resetBtn.addEventListener('click', function(){
+    currentDataUrl = null;
+    fileInput.value = '';
+    inputFrame.innerHTML = '';
+    inputFrame.appendChild(inputPlaceholder);
+    outputFrame.innerHTML = '';
+    outputFrame.appendChild(outputPlaceholder);
+    smeltBtn.disabled = true;
+    smeltBtn.style.display = '';
+    downloadBtn.style.display = 'none';
+    resetBtn.style.display = 'none';
+    setError('');
+  });
+})();
+</script>
+</body>
+</html>
