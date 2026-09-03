@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>MINECRAFTERS — $MINECRAFT | The Cult Coin</title>
-<meta name="description" content="MINECRAFTERS ($MINECRAFT) — a satirical meme coin paired with $MSFT. Join the cult and forge your Minecraft-style pfp." />
+<title>MINECRAFTERS — $MINECRAFTERS | The Cult Coin</title>
+<meta name="description" content="MINECRAFTERS ($MINECRAFTERS) — a satirical meme coin paired with $MSFT. Join the cult and forge your Minecraft-style pfp." />
 <meta name="theme-color" content="#0b0a08" />
 <link rel="icon" type="image/png" href="/pfp.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -129,7 +129,7 @@
   header.hero{
     position:relative;isolation:isolate;min-height:100svh;display:flex;flex-direction:column;
     justify-content:center;align-items:center;text-align:center;
-    padding:120px 24px 100px;
+    padding:70px 24px 68px;
     background:
       radial-gradient(ellipse at 30% 20%, rgba(240,178,58,.10), transparent 55%),
       radial-gradient(ellipse at 75% 60%, rgba(155,77,224,.12), transparent 55%),
@@ -164,31 +164,30 @@
   .eyebrow{
     font-family:var(--font-mono);font-size:12px;letter-spacing:3px;color:var(--cult);
     border:1px solid var(--cult-dark);background:rgba(155,77,224,.08);
-    padding:8px 14px;margin-bottom:28px;text-transform:uppercase;
+    padding:8px 14px;margin-bottom:16px;text-transform:uppercase;
   }
 
-  .hero-title{
-    font-family:var(--font-display);
-    font-weight:700;
-    font-size:clamp(16px, 6.6vw, 58px);
-    color:var(--bone);
-    letter-spacing:2px;
-    margin:0 0 18px;
-    display:flex;flex-wrap:wrap;justify-content:center;gap:.05em;
-    text-shadow:4px 4px 0 rgba(0,0,0,.6);
+  .hero-title-wrap{margin:0 0 8px;}
+  .hero-title-img{
+    display:block;
+    width:min(680px, 88vw);
+    height:auto;
+    margin:0 auto;
+    filter:drop-shadow(0 10px 22px rgba(0,0,0,.55));
+    animation:drop .7s cubic-bezier(.34,1.56,.64,1) both;
   }
-  .hero-title span{display:inline-block;animation:drop .6s cubic-bezier(.34,1.56,.64,1) both;animation-delay:calc(var(--i) * 45ms);}
-  @keyframes drop{from{opacity:0;transform:translateY(-46px) scale(1.1);}to{opacity:1;transform:translateY(0) scale(1);}}
-  @media (prefers-reduced-motion: reduce){ .hero-title span{animation:none;opacity:1;} }
+  @keyframes drop{from{opacity:0;transform:translateY(-40px) scale(1.06);}to{opacity:1;transform:translateY(0) scale(1);}}
+  @media (prefers-reduced-motion: reduce){ .hero-title-img{animation:none;opacity:1;} }
 
   .ticker{
     position:relative;
     font-family:var(--font-display);
     font-weight:700;
-    font-size:clamp(20px, 4.2vw, 32px);
+    font-size:clamp(14px, 2.2vw, 18px);
     color:var(--gold);
-    text-shadow:0 0 18px rgba(240,178,58,.55), 3px 3px 0 rgba(0,0,0,.6);
-    margin-bottom:36px;
+    text-shadow:0 0 14px rgba(240,178,58,.5), 2px 2px 0 rgba(0,0,0,.6);
+    letter-spacing:1px;
+    margin-bottom:18px;
   }
   .ticker::after{
     content:attr(data-text);
@@ -206,16 +205,16 @@
     border-top:2px solid #7b3fc4;border-left:2px solid #5a2a99;
     border-right:2px solid #2c1450;border-bottom:2px solid #2c1450;
     box-shadow:0 8px 0 rgba(0,0,0,.5), 0 0 34px rgba(155,77,224,.22);
-    padding:22px 26px;max-width:480px;width:100%;text-align:left;margin-bottom:40px;
+    padding:16px 22px;max-width:480px;width:100%;text-align:left;margin-bottom:22px;
   }
-  .tooltip-card .tt-name{font-family:var(--font-mono);font-weight:700;color:var(--bone);font-size:14px;margin-bottom:8px;}
-  .tooltip-card .tt-rarity{font-style:italic;color:var(--cult);font-size:12px;margin-bottom:14px;font-family:var(--font-body);}
-  .tooltip-card .tt-line{display:flex;align-items:center;gap:8px;color:var(--gold-light);font-size:13px;margin-bottom:6px;font-family:var(--font-mono);}
+  .tooltip-card .tt-name{font-family:var(--font-mono);font-weight:700;color:var(--bone);font-size:14px;margin-bottom:6px;}
+  .tooltip-card .tt-rarity{font-style:italic;color:var(--cult);font-size:12px;margin-bottom:10px;font-family:var(--font-body);}
+  .tooltip-card .tt-line{display:flex;align-items:center;gap:8px;color:var(--gold-light);font-size:13px;margin-bottom:5px;font-family:var(--font-mono);}
   .tooltip-card .tt-line svg{width:16px;height:16px;flex:none;}
-  .tooltip-card .tt-flavor{margin-top:14px;color:var(--bone-dim);font-style:italic;font-size:13px;border-top:1px solid rgba(155,77,224,.25);padding-top:12px;}
+  .tooltip-card .tt-flavor{margin-top:10px;color:var(--bone-dim);font-style:italic;font-size:13px;border-top:1px solid rgba(155,77,224,.25);padding-top:9px;}
 
-  .hero-cta{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-bottom:18px;}
-  .hero-note{font-family:var(--font-mono);font-size:12px;color:var(--bone-dim);max-width:420px;}
+  .hero-cta{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-bottom:10px;}
+  .hero-note{font-family:var(--font-mono);font-size:12px;color:var(--bone-dim);max-width:520px;}
   .hero-note a{color:var(--gold);text-decoration:underline;text-underline-offset:3px;}
 
   /* ============ BUTTONS ============ */
@@ -469,11 +468,11 @@
   <div class="particles" id="particles" aria-hidden="true"></div>
   <div class="eyebrow">◆ The Overworld's Only Cult Coin ◆</div>
 
-  <h1 class="hero-title" id="heroTitle" aria-label="MINECRAFTERS"></h1>
-  <div class="ticker" data-text="$MINECRAFT">$MINECRAFT</div>
+  <h1 class="hero-title-wrap"><img class="hero-title-img" id="heroTitle" src="/text-cropped.png" alt="MINECRAFTERS" /></h1>
+  <div class="ticker" data-text="$MINECRAFTERS">$MINECRAFTERS</div>
 
   <div class="tooltip-card">
-    <div class="tt-name">MINECRAFTERS · $MINECRAFT</div>
+    <div class="tt-name">MINECRAFTERS · $MINECRAFTERS</div>
     <div class="tt-rarity">Rarity: Cult</div>
     <div class="tt-line"><svg class="icon"><use href="#i-book"/></svg> Paired with $MSFT (Microsoft Corp)</div>
     <div class="tt-line"><svg class="icon"><use href="#i-eye"/></svg> Status: Pre-Launch</div>
@@ -483,7 +482,7 @@
   <div class="hero-cta">
     <a class="btn btn-gold" href="#ritual">Join The Cult</a>
   </div>
-  <p class="hero-note">100% satire. $MINECRAFT is not affiliated with Microsoft or Mojang, and is not pegged to $MSFT in any real financial sense. See the <a href="#disclaimer">disclaimer</a> before doing anything silly.</p>
+  <p class="hero-note">100% satire. $MINECRAFTERS is not affiliated with Microsoft or Mojang, and is not pegged to $MSFT in any real financial sense. See the <a href="#disclaimer">disclaimer</a> before doing anything silly.</p>
 
   <div class="ground-strip"></div>
 </header>
@@ -505,7 +504,7 @@
           <div class="slot9"><svg class="icon"><use href="#i-lock"/></svg><div class="s-label">Liquidity</div><div class="s-value">Locked</div></div>
           <div class="slot9"><svg class="icon"><use href="#i-skull"/></svg><div class="s-label">Ownership</div><div class="s-value">Renounced</div></div>
           <div class="slot9"><svg class="icon"><use href="#i-compass"/></svg><div class="s-label">Chain</div><div class="s-value">TBA</div></div>
-          <div class="slot9"><svg class="icon"><use href="#i-diamond"/></svg><div class="s-label">Ticker</div><div class="s-value">$MINECRAFT</div></div>
+          <div class="slot9"><svg class="icon"><use href="#i-diamond"/></svg><div class="s-label">Ticker</div><div class="s-value">$MINECRAFTERS</div></div>
           <div class="slot9"><svg class="icon"><use href="#i-book"/></svg><div class="s-label">Paired With</div><div class="s-value">$MSFT</div></div>
           <div class="slot9"><svg class="icon"><use href="#i-bedrock"/></svg><div class="s-label">Dev Wallet</div><div class="s-value">0%</div></div>
           <div class="slot9"><svg class="icon"><use href="#i-tnt"/></svg><div class="s-label">Status</div><div class="s-value">Pre-Launch</div></div>
@@ -586,7 +585,7 @@
         <div class="step">
           <div class="num">03</div>
           <h4>Swap &amp; Join</h4>
-          <p>Swap for $MINECRAFT. Welcome to the cult. Advancement unlocked.</p>
+          <p>Swap for $MINECRAFTERS. Welcome to the cult. Advancement unlocked.</p>
         </div>
       </div>
     </div>
@@ -598,10 +597,10 @@
       <div class="section-head" style="margin-bottom:32px;">
         <div class="section-kicker">Chapter IV</div>
         <h2 class="section-title">The Council</h2>
-        <p class="section-sub">Community channels open at launch.</p>
+        <p class="section-sub">Follow along. More channels open at launch.</p>
       </div>
       <div class="council-links">
-        <button class="btn btn-soon" type="button">X / Twitter<span class="ribbon">Soon</span></button>
+        <a class="btn btn-gold" href="https://x.com/minecrafters_rh" target="_blank" rel="noopener">X / Twitter</a>
       </div>
     </div>
   </section>
@@ -612,7 +611,7 @@
   <div class="wrap">
     <div class="sign">
       <h3><svg class="icon"><use href="#i-warn"/></svg> Disclaimer</h3>
-      <p><strong>$MINECRAFT (&ldquo;MINECRAFTERS&rdquo;)</strong> is a satirical, community-made meme token created for entertainment purposes only. It has no intrinsic value, no guaranteed liquidity, and no expectation of financial return. Nothing on this site is financial, investment, legal, or tax advice &mdash; do your own research and never risk more than you can afford to lose completely.</p>
+      <p><strong>$MINECRAFTERS (&ldquo;MINECRAFTERS&rdquo;)</strong> is a satirical, community-made meme token created for entertainment purposes only. It has no intrinsic value, no guaranteed liquidity, and no expectation of financial return. Nothing on this site is financial, investment, legal, or tax advice &mdash; do your own research and never risk more than you can afford to lose completely.</p>
       <p>MINECRAFTERS is <strong>not affiliated with, endorsed by, or connected to Mojang Studios, Microsoft Corporation, or the Minecraft trademark</strong> in any way. All references to Minecraft and $MSFT are commentary and parody. &ldquo;Paired with $MSFT&rdquo; describes a joke, not a financial mechanism &mdash; there is no peg, hedge, derivative, or contractual relationship between this token and Microsoft stock of any kind.</p>
       <p>The pfp generator sends photos you voluntarily upload to a third-party AI image model to produce a stylized result. Only upload images you have the right to use, and avoid uploading photos of other people without their consent.</p>
       <p>Cryptocurrency is volatile and largely unregulated. You could lose your entire investment. Void where prohibited. Not offered to residents of restricted jurisdictions.</p>
@@ -623,16 +622,6 @@
 
 <script>
 (function(){
-  // Hero title block-drop
-  var title = document.getElementById('heroTitle');
-  var text = 'MINECRAFTERS';
-  text.split('').forEach(function(ch, i){
-    var span = document.createElement('span');
-    span.textContent = ch;
-    span.style.setProperty('--i', i);
-    title.appendChild(span);
-  });
-
   // Ambient rising particles in the hero
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var particleHost = document.getElementById('particles');
