@@ -129,7 +129,7 @@
   header.hero{
     position:relative;isolation:isolate;min-height:100svh;display:flex;flex-direction:column;
     justify-content:center;align-items:center;text-align:center;
-    padding:70px 24px 68px;
+    padding:64px 24px 110px;
     background:
       radial-gradient(ellipse at 30% 20%, rgba(240,178,58,.10), transparent 55%),
       radial-gradient(ellipse at 75% 60%, rgba(155,77,224,.12), transparent 55%),
@@ -187,7 +187,7 @@
     color:var(--gold);
     text-shadow:0 0 14px rgba(240,178,58,.5), 2px 2px 0 rgba(0,0,0,.6);
     letter-spacing:1px;
-    margin-bottom:18px;
+    margin-bottom:10px;
   }
   .ticker::after{
     content:attr(data-text);
@@ -200,12 +200,35 @@
   @keyframes pulse-glow{0%,100%{opacity:0;}50%{opacity:.85;}}
   @media (prefers-reduced-motion: reduce){ .ticker::after{animation:none;opacity:0;} }
 
+  .ca-bar{
+    display:flex;align-items:center;gap:10px;
+    max-width:480px;width:100%;margin:0 0 14px;padding:9px 14px;
+    background:linear-gradient(135deg,#221a12,#160f0a);
+    border:2px solid var(--gold-dark);
+    color:var(--bone);font-family:inherit;
+    cursor:pointer;text-align:left;
+    transition:transform .12s cubic-bezier(.34,1.56,.64,1), box-shadow .12s, border-color .12s;
+    box-shadow:3px 3px 0 rgba(0,0,0,.4);
+  }
+  .ca-bar:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:4px 5px 0 rgba(0,0,0,.4), 0 0 16px rgba(240,178,58,.3);}
+  .ca-bar:active{transform:translateY(1px);box-shadow:2px 2px 0 rgba(0,0,0,.4);}
+  .ca-bar:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+  .ca-label{
+    flex:none;font-family:var(--font-display);font-weight:700;font-size:10px;
+    color:var(--ink);background:var(--gold);padding:4px 6px;
+  }
+  .ca-value{
+    flex:1 1 auto;min-width:0;font-family:var(--font-mono);font-size:12.5px;color:var(--bone-dim);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .ca-copy{flex:none;font-family:var(--font-mono);font-size:11px;color:var(--gold);letter-spacing:.5px;text-transform:uppercase;}
+
   .tooltip-card{
     background:linear-gradient(180deg, #1c0e2b, #120820);
     border-top:2px solid #7b3fc4;border-left:2px solid #5a2a99;
     border-right:2px solid #2c1450;border-bottom:2px solid #2c1450;
     box-shadow:0 8px 0 rgba(0,0,0,.5), 0 0 34px rgba(155,77,224,.22);
-    padding:16px 22px;max-width:480px;width:100%;text-align:left;margin-bottom:22px;
+    padding:14px 20px;max-width:480px;width:100%;text-align:left;margin-bottom:16px;
   }
   .tooltip-card .tt-name{font-family:var(--font-mono);font-weight:700;color:var(--bone);font-size:14px;margin-bottom:6px;}
   .tooltip-card .tt-rarity{font-style:italic;color:var(--cult);font-size:12px;margin-bottom:10px;font-family:var(--font-body);}
@@ -213,7 +236,7 @@
   .tooltip-card .tt-line svg{width:16px;height:16px;flex:none;}
   .tooltip-card .tt-flavor{margin-top:10px;color:var(--bone-dim);font-style:italic;font-size:13px;border-top:1px solid rgba(155,77,224,.25);padding-top:9px;}
 
-  .hero-cta{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-bottom:10px;}
+  .hero-cta{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-bottom:6px;}
   .hero-note{font-family:var(--font-mono);font-size:12px;color:var(--bone-dim);max-width:520px;}
   .hero-note a{color:var(--gold);text-decoration:underline;text-underline-offset:3px;}
 
@@ -471,11 +494,17 @@
   <h1 class="hero-title-wrap"><img class="hero-title-img" id="heroTitle" src="/text-cropped.png" alt="MINECRAFTERS" /></h1>
   <div class="ticker" data-text="$MINECRAFTERS">$MINECRAFTERS</div>
 
+  <button class="ca-bar" id="caBar" type="button" aria-label="Copy contract address">
+    <span class="ca-label">CA</span>
+    <span class="ca-value" id="caValue">0x8858F2830f1C19c92C66E580dA6F3d28ce2B511f</span>
+    <span class="ca-copy" id="caCopyLabel">Copy</span>
+  </button>
+
   <div class="tooltip-card">
     <div class="tt-name">MINECRAFTERS · $MINECRAFTERS</div>
     <div class="tt-rarity">Rarity: Cult</div>
     <div class="tt-line"><svg class="icon"><use href="#i-book"/></svg> Paired with $MSFT (Microsoft Corp)</div>
-    <div class="tt-line"><svg class="icon"><use href="#i-eye"/></svg> Status: Pre-Launch</div>
+    <div class="tt-line"><svg class="icon"><use href="#i-eye"/></svg> Status: Live</div>
     <div class="tt-flavor">"When Redmond speaks, the chunks tremble."</div>
   </div>
 
@@ -503,11 +532,11 @@
           <div class="slot9"><svg class="icon"><use href="#i-emerald"/></svg><div class="s-label">Buy / Sell Tax</div><div class="s-value">0% / 0%</div></div>
           <div class="slot9"><svg class="icon"><use href="#i-lock"/></svg><div class="s-label">Liquidity</div><div class="s-value">Locked</div></div>
           <div class="slot9"><svg class="icon"><use href="#i-skull"/></svg><div class="s-label">Ownership</div><div class="s-value">Renounced</div></div>
-          <div class="slot9"><svg class="icon"><use href="#i-compass"/></svg><div class="s-label">Chain</div><div class="s-value">TBA</div></div>
+          <div class="slot9"><svg class="icon"><use href="#i-compass"/></svg><div class="s-label">Chain</div><div class="s-value">Robinhood Chain</div></div>
           <div class="slot9"><svg class="icon"><use href="#i-diamond"/></svg><div class="s-label">Ticker</div><div class="s-value">$MINECRAFTERS</div></div>
           <div class="slot9"><svg class="icon"><use href="#i-book"/></svg><div class="s-label">Paired With</div><div class="s-value">$MSFT</div></div>
           <div class="slot9"><svg class="icon"><use href="#i-bedrock"/></svg><div class="s-label">Dev Wallet</div><div class="s-value">0%</div></div>
-          <div class="slot9"><svg class="icon"><use href="#i-tnt"/></svg><div class="s-label">Status</div><div class="s-value">Pre-Launch</div></div>
+          <div class="slot9"><svg class="icon"><use href="#i-torch"/></svg><div class="s-label">Status</div><div class="s-value">Live</div></div>
         </div>
       </div>
     </div>
@@ -580,7 +609,7 @@
         <div class="step">
           <div class="num">02</div>
           <h4>Find The Real Contract</h4>
-          <p>Once live, the official contract address will be posted here and in the official channels. Never trust one from a DM.</p>
+          <p>The official contract address is posted at the top of this page and in the official channels. Never trust one from a DM.</p>
         </div>
         <div class="step">
           <div class="num">03</div>
@@ -655,6 +684,43 @@
       el.classList.remove('show');
       setTimeout(function(){ el.remove(); }, 400);
     }, 4200);
+  }
+
+  // Copy contract address
+  var caBar = document.getElementById('caBar');
+  var caValue = document.getElementById('caValue');
+  var caCopyLabel = document.getElementById('caCopyLabel');
+  if (caBar) {
+    caBar.addEventListener('click', function(){
+      var text = caValue.textContent;
+      var done = function(){
+        caCopyLabel.textContent = 'Copied!';
+        showToast('Copied The Contract');
+        setTimeout(function(){ caCopyLabel.textContent = 'Copy'; }, 2000);
+      };
+      var fallbackCopy = function(){
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        var ok = false;
+        try { ok = document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(ta);
+        if (ok) {
+          done();
+        } else {
+          caCopyLabel.textContent = 'Failed';
+          setTimeout(function(){ caCopyLabel.textContent = 'Copy'; }, 2000);
+        }
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(fallbackCopy);
+      } else {
+        fallbackCopy();
+      }
+    });
   }
 
   // Scroll reveal + one-time toasts
