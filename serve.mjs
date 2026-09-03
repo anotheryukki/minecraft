@@ -29,8 +29,12 @@ const MIME = {
 
 const server = http.createServer(async (req, res) => {
   try {
-    if (req.method === 'POST' && req.url === '/api/pfp') {
-      return await handlePfp(req, res);
+    const url = new URL(req.url, `http://${req.headers.host}`);
+    if (req.method === 'POST' && url.pathname === '/api/pfp/start') {
+      return await handlePfpStart(req, res);
+    }
+    if (req.method === 'GET' && url.pathname === '/api/pfp/status') {
+      return await handlePfpStatus(url, res);
     }
     return await serveStatic(req, res);
   } catch (err) {
@@ -77,7 +81,15 @@ function readBody(req) {
   });
 }
 
-async function handlePfp(req, res) {
+const PROMPT =
+  'Transform this photo into an official Minecraft video game character skin portrait: blocky voxel head and shoulders, chunky cube-based geometry, flat low-res pixelated textures, simple flat-shaded lighting like the Minecraft game engine, centered square portrait, preserve the recognizable likeness, hair color and skin tone of the subject. Background: a vivid Minecraft Overworld scene behind the subject — green grass blocks, dirt and stone, a blue daylight sky with a few pixel clouds, rendered in the same blocky low-res game style as the subject. Do not use a plain, grey, white, or studio background.';
+
+// Starts a prediction and returns immediately with its id — the client polls
+// /api/pfp/status instead of us holding one connection open for the whole
+// generation. Long-held requests get killed by all kinds of intermediaries
+// (proxies, wifi, mobile networks), which showed up as false "connection
+// error" failures even though generation was actually succeeding.
+async function handlePfpStart(req, res) {
   let body;
   try {
     body = JSON.parse(await readBody(req));
@@ -92,20 +104,16 @@ async function handlePfp(req, res) {
     return res.end(JSON.stringify({ error: 'A valid image is required' }));
   }
 
-  const prompt =
-    'Transform this photo into an official Minecraft video game character skin portrait: blocky voxel head and shoulders, chunky cube-based geometry, flat low-res pixelated textures, simple flat-shaded lighting like the Minecraft game engine, centered square portrait, preserve the recognizable likeness, hair color and skin tone of the subject. Background: a vivid Minecraft Overworld scene behind the subject — green grass blocks, dirt and stone, a blue daylight sky with a few pixel clouds, rendered in the same blocky low-res game style as the subject. Do not use a plain, grey, white, or studio background.';
-
   try {
     const createRes = await fetch(`https://api.replicate.com/v1/models/${MODEL}/predictions`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${REPLICATE_API_TOKEN}`,
         'Content-Type': 'application/json',
-        Prefer: 'wait=55',
       },
       body: JSON.stringify({
         input: {
-          prompt,
+          prompt: PROMPT,
           image_input: [image],
           aspect_ratio: '1:1',
           output_format: 'png',
@@ -113,22 +121,14 @@ async function handlePfp(req, res) {
       }),
     });
 
-    let prediction = await createRes.json();
+    const prediction = await createRes.json();
     if (!createRes.ok) {
       res.writeHead(createRes.status, { 'Content-Type': 'application/json' });
       return res.end(JSON.stringify({ error: prediction?.detail || 'Generation failed to start' }));
     }
 
-    prediction = await pollPrediction(prediction);
-
-    if (prediction.status !== 'succeeded') {
-      res.writeHead(502, { 'Content-Type': 'application/json' });
-      return res.end(JSON.stringify({ error: prediction.error || 'Generation failed' }));
-    }
-
-    const output = Array.isArray(prediction.output) ? prediction.output[0] : prediction.output;
     res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ url: output }));
+    res.end(JSON.stringify({ id: prediction.id, status: prediction.status }));
   } catch (err) {
     console.error(err);
     res.writeHead(502, { 'Content-Type': 'application/json' });
@@ -136,17 +136,39 @@ async function handlePfp(req, res) {
   }
 }
 
-async function pollPrediction(prediction) {
-  let tries = 0;
-  while ((prediction.status === 'starting' || prediction.status === 'processing') && tries < 40) {
-    await new Promise((r) => setTimeout(r, 1500));
-    const r = await fetch(prediction.urls.get, {
+async function handlePfpStatus(url, res) {
+  const id = url.searchParams.get('id');
+  if (!id || !/^[a-zA-Z0-9]+$/.test(id)) {
+    res.writeHead(400, { 'Content-Type': 'application/json' });
+    return res.end(JSON.stringify({ error: 'A valid prediction id is required' }));
+  }
+
+  try {
+    const r = await fetch(`https://api.replicate.com/v1/predictions/${id}`, {
       headers: { Authorization: `Bearer ${REPLICATE_API_TOKEN}` },
     });
-    prediction = await r.json();
-    tries++;
+    const prediction = await r.json();
+    if (!r.ok) {
+      res.writeHead(r.status, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify({ error: prediction?.detail || 'Could not check status' }));
+    }
+
+    if (prediction.status === 'succeeded') {
+      const output = Array.isArray(prediction.output) ? prediction.output[0] : prediction.output;
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify({ status: 'succeeded', url: output }));
+    }
+    if (prediction.status === 'failed' || prediction.status === 'canceled') {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify({ status: prediction.status, error: prediction.error || 'Generation failed' }));
+    }
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ status: prediction.status }));
+  } catch (err) {
+    console.error(err);
+    res.writeHead(502, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Could not reach the generator. Try again.' }));
   }
-  return prediction;
 }
 
 server.listen(PORT, () => console.log(`MINECRAFTERS serving on http://localhost:${PORT}`));

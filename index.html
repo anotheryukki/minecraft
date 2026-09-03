@@ -836,35 +836,70 @@
       setTimeout(function(){ flavorText.textContent = flavorLines[fi]; flavorText.style.opacity = 1; }, 250);
     }, 1800);
 
-    fetch('/api/pfp', {
+    function finishRun(errorMsg){
+      clearInterval(flavorTimer);
+      loadingStatus.classList.remove('show');
+      chooseLabel.style.pointerEvents = '';
+      chooseLabel.style.opacity = '';
+      if (errorMsg){
+        setError(errorMsg);
+        smeltBtn.disabled = false;
+      }
+    }
+
+    function pollStatus(id, attemptsLeft){
+      if (attemptsLeft <= 0){
+        finishRun('☠ You died… this is taking longer than usual. Try again.');
+        return;
+      }
+      fetch('/api/pfp/status?id=' + encodeURIComponent(id))
+        .then(function(r){ return r.json().then(function(data){ return { ok: r.ok, data: data }; }); })
+        .then(function(res){
+          if (!res.ok || !res.data){
+            finishRun('☠ You died… to a server error. ' + (res.data && res.data.error ? '(' + res.data.error + ')' : ''));
+            return;
+          }
+          var status = res.data.status;
+          if (status === 'succeeded'){
+            finishRun(null);
+            outputFrame.innerHTML = '<img src="' + res.data.url + '" alt="Minecraft-style version of your photo" />';
+            downloadBtn.href = res.data.url;
+            downloadBtn.style.display = '';
+            smeltBtn.style.display = 'none';
+            resetBtn.style.display = '';
+            showToast('Forged a New Skin');
+            return;
+          }
+          if (status === 'failed' || status === 'canceled'){
+            finishRun('☠ You died… to a server error. ' + (res.data.error ? '(' + res.data.error + ')' : ''));
+            return;
+          }
+          setTimeout(function(){ pollStatus(id, attemptsLeft - 1); }, 2000);
+        })
+        .catch(function(){
+          // one dropped poll shouldn't kill the whole run — retry a few times before giving up
+          if (attemptsLeft <= 1){
+            finishRun('☠ You died… to a connection error. Check your connection and try again.');
+            return;
+          }
+          setTimeout(function(){ pollStatus(id, attemptsLeft - 1); }, 2500);
+        });
+    }
+
+    fetch('/api/pfp/start', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ image: currentDataUrl })
     }).then(function(r){
       return r.json().then(function(data){ return { ok: r.ok, data: data }; });
     }).then(function(res){
-      clearInterval(flavorTimer);
-      loadingStatus.classList.remove('show');
-      chooseLabel.style.pointerEvents = '';
-      chooseLabel.style.opacity = '';
-      if (!res.ok || !res.data || !res.data.url){
-        setError('☠ You died… to a server error. ' + (res.data && res.data.error ? '(' + res.data.error + ')' : ''));
-        smeltBtn.disabled = false;
+      if (!res.ok || !res.data || !res.data.id){
+        finishRun('☠ You died… to a server error. ' + (res.data && res.data.error ? '(' + res.data.error + ')' : ''));
         return;
       }
-      outputFrame.innerHTML = '<img src="' + res.data.url + '" alt="Minecraft-style version of your photo" />';
-      downloadBtn.href = res.data.url;
-      downloadBtn.style.display = '';
-      smeltBtn.style.display = 'none';
-      resetBtn.style.display = '';
-      showToast('Forged a New Skin');
+      pollStatus(res.data.id, 90);
     }).catch(function(){
-      clearInterval(flavorTimer);
-      loadingStatus.classList.remove('show');
-      chooseLabel.style.pointerEvents = '';
-      chooseLabel.style.opacity = '';
-      setError('☠ You died… to a connection error. Check your connection and try again.');
-      smeltBtn.disabled = false;
+      finishRun('☠ You died… to a connection error. Check your connection and try again.');
     });
   });
 
